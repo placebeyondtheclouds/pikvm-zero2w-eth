@@ -20,15 +20,17 @@ RPI GPIO pinout: https://pinout.xyz/pinout/spi
 
 ## parts list
 
-- a generic plastic case for PLC, 145x90x40
-- HDMI to CSI2 adapter, TC35874XBG chip https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter
-- ribbon cable (wide to narrow)
-- ENC28J60 chip based ethernet adapter (10Mbps) https://www.waveshare.com/wiki/ENC28J60_Ethernet_Board
-- rp0 aluminium case
+- a generic plastic case for PLC, 145x90x40 2 元
+- HDMI to CSI2 adapter, TC35874XBG chip https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter 129 元
+- ribbon cable, 22pin to 15 pin, 20cm 8 元
+- ENC28J60 chip based ethernet adapter (10Mbps) https://www.waveshare.com/wiki/ENC28J60_Ethernet_Board 14 元
+- rp0 aluminium case 24 元
 - USB mini to USB A cable
-- 32Gb tf card
-- SSD1315 chip based OLED display https://www.waveshare.com/wiki/0.96inch_OLED_Module
-- Raspberry Pi zero 2 W - https://www.waveshare.com/wiki/Raspberry_Pi_Zero_2_W
+- 32Gb A1 U1 C10 microsd card 60 元
+- SSD1315 chip based OLED display https://www.waveshare.com/wiki/0.96inch_OLED_Module 28 元
+- Raspberry Pi zero 2 W - https://www.waveshare.com/wiki/Raspberry_Pi_Zero_2_W 165 元
+- DS1307 RTC board 20 元
+- terminated colored wires 2 元
 
 ## software
 
