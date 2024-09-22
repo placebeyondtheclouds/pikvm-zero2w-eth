@@ -21,13 +21,14 @@ RPI GPIO pinout: https://pinout.xyz/pinout/spi
 ## parts list
 
 - a generic plastic case for PLC, 145x90x40
-- HDMI to CSI2 adapter, TC35874XBG chip
+- HDMI to CSI2 adapter, TC35874XBG chip https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter
 - ribbon cable (wide to narrow)
-- ENC28J60 chip based ethernet adapter (10Mbps)
+- ENC28J60 chip based ethernet adapter (10Mbps) https://www.waveshare.com/wiki/ENC28J60_Ethernet_Board
 - rp0 aluminium case
 - USB mini to USB A cable
 - 32Gb tf card
-- SSD1315 chip based OLED display
+- SSD1315 chip based OLED display https://www.waveshare.com/wiki/0.96inch_OLED_Module
+- Raspberry Pi zero 2 W - https://www.waveshare.com/wiki/Raspberry_Pi_Zero_2_W
 
 ## software
 
@@ -78,7 +79,7 @@ oled (DC/DC) --- Pi (Pin 16) GPIO 23
 oled (Reset/R) --- Pi (Pin 18) GPIO 24
 oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
 
-By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1. OLED module I2C bus wiring:
+By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and set the address with RO (default is 0x3D). OLED module I2C bus wiring:
 
 | OLED | RPI GPIO     | DS1307 |
 | ---- | ------------ | ------ |
