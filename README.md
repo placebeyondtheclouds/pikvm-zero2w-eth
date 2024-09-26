@@ -6,13 +6,12 @@ Based on https://github.com/pikvm/pikvm
 
 Use case:
 
-- to control a server with old BMC firmware that has broken remote control feature
+- to control a server with an old BMC firmware that has broken remote control feature
 - Wake-on-LAN other devices
 
 Main differences between my build and the [official build for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
 
     - My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
-    - DS1307 chip RTC clock module (optional)
     - Didn't utilize ATX power control
     - Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
 
@@ -30,8 +29,10 @@ Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/maste
 - 32Gb A1 U1 C10 microsd card 60 元
 - SSD1315 chip based OLED display https://www.waveshare.com/wiki/0.96inch_OLED_Module 28 元
 - Raspberry Pi zero 2 W - https://www.waveshare.com/wiki/Raspberry_Pi_Zero_2_W 165 元
-- DS1307 RTC board 20 元 (do not recommend, better use DS3231 chip based board)
+- DS1307 RTC board 20 元 (optional, do not recommend, better use DS3231 chip based board)
 - terminated colored wires 2 元
+
+Total: 452 元
 
 ## software
 
@@ -52,16 +53,16 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 | SO       | GPIO9 MISO (Pin 21)  |
 | INT      | GPIO 25 (Pin 22)     |
 
-- DS1307 chip RTC module is connected to I2C bus, my particular module is occupying GPIO socket at 1-10 pins with I2C bus pins passthrough
+- DS1307 chip RTC module is connected to I2C bus (default address 0x68). If decide to the module, then the screen wires needs to be soldered to the back of the board.
 
-- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and set the address with RO (default is 0x3D). OLED module I2C bus wiring:
+- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and set the address (the default is 0x3D) with RO. OLED module I2C bus wiring:
 
-| OLED | RPI GPIO     | DS1307 |
-| ---- | ------------ | ------ |
-| VCC  | 3.3V (pin 1) | 3V3    |
-| DIN  | SDA (pin 3)  | SDA    |
-| CLK  | SCL (pin 5)  | SCL    |
-| GND  | GND (pin 6)  | GND    |
+| OLED | RPI GPIO     |
+| ---- | ------------ |
+| VCC  | 3.3V (pin 1) |
+| DIN  | SDA (pin 3)  |
+| CLK  | SCL (pin 5)  |
+| GND  | GND (pin 6)  |
 
 - OLED module could also be connected to SPI1 (SPI1 pins are GPIO 16, 17, 18, 19, 20, 21)
 
@@ -74,23 +75,6 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 | GND  | GND (pin 6)                |
 | CLK  | SPI1 SCLK GPIO 21 (pin 40) |
 | DC   | GPIO 26 (pin 37)           |
-
-Wire colour GPIO Pin # Name
-White 16 RST reset
-Orange 17 CS – Chip select
-Yellow 18 CLK - Clock
-Blue 19 MOSI / DIN
-Green 20 DC – Data/Command
-Red 3.3 Volts VCC
-Black GND GND
-
-oled (GND/G) --- Pi ( Pin 6 Gnd)
-oled (Vin/+) --- Pi (Pin 1 3.3v)
-oled (MOSI/SI) --- Pi (Pin 19) GPIO 10 (MOSI)
-oled (SCK/CL) --- Pi (Pin 23) GPIO 11 (SCLK))
-oled (DC/DC) --- Pi (Pin 16) GPIO 23
-oled (Reset/R) --- Pi (Pin 18) GPIO 24
-oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
 
 ## setting up
 
@@ -122,6 +106,8 @@ oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
     `pacman -S pikvm-os-updater iperf3 chrony`
     `pikvm-update`
     `ro`
+  - on error `failed to synchronize any databases`:
+    - `rm -f /var/lib/pacman/db.lck`
 
 - set up the ethernet module:
 
@@ -135,34 +121,38 @@ oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
   - `sudo /sbin/reboot`
   - `lsmod`
   - `dmesg | grep Ethernet`
-  - switch to full duplex script:
+  - switch to full duplex:
 
-    - `rw`
     - `nano /etc/systemd/system/enc28j60-full-duplex.service`
 
       - ```
-        [Unit]
-        Description=ENC28J60 Full Duplex
-        After=network.target
+            [Unit]
+            Description=ENC28J60 Full Duplex
+            After=multi-user.target
 
-        [Service]
-        Type=oneshot
-        ExecStart=/usr/bin/ethtool -s eth0 speed 10 duplex full autoneg off
+            [Service]
+            Type=simple
+            Restart=always
+            ExecStartPre=/bin/sleep 60
+            ExecStart=ifconfig eth0 down && ethtool -s eth0 speed 10 duplex full autoneg off && systemctl restart systemd-networkd.service && systemctl restart systemd-networkd.service && ifconfig eth0 up
 
-        [Install]
-        WantedBy=multi-user.target
+            [Install]
+            WantedBy=multi-user.target
         ```
 
+    - `chmod 644 /etc/systemd/system/enc28j60-full-duplex.service`
+    - `systemctl daemon-reload`
     - `systemctl enable enc28j60-full-duplex.service`
     - `systemctl start enc28j60-full-duplex.service`
+    - `systemctl restart enc28j60-full-duplex.service`
     - `ro`
 
-- set up the OLED display for use with SPI (enable SPI1):
+- (skip) set up the OLED display for use with SPI (I couldn't make it work):
 
   - `rw`
   - `nano /boot/config.txt`
     - ```
-        dtoverlay=spi1-3cs,
+        dtoverlay=spi1-3cs
       ```
   - `systemctl enable --now kvmd-oled kvmd-oled-reboot kvmd-oled-shutdown`
   - `ro`
@@ -200,11 +190,24 @@ oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
   - `date`
   - `hwclock --show`
   - `hwclock -w`
-  - `crontab -e`
+  - add read at boot:
 
-    - ```
-      @reboot hwclock -r
-      ```
+        - `nano /etc/systemd/system/hwclock-sync.service`
+
+        - ```
+            [Unit]
+            Description=Sync hwclock from system clock
+            After=network.target
+
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/bin/hwclock -r
+
+            [Install]
+            WantedBy=multi-user.target
+            ```
+
+        - `systemctl enable hwclock-sync.service`
 
   - `timedatectl set-timezone Asia/Shanghai`
   - `ro`
@@ -240,7 +243,7 @@ oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
   - `ro`
   - `ethtool eth0`
 
-- change wifi parameters:
+- change wifi parameters (https://docs.pikvm.org/wifi/#setting-up-wi-fi-manually):
 
   - `rw`
   - `nano /etc/systemd/network/wlan0.network`
@@ -260,7 +263,7 @@ oled (OLEDCS/OC) --- Pin 24 (GPIO 8 CE0)
         Metric=50
       ```
 
-    - `wpa_passphrase 'MyNetwork' 'P@assw0rd' > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
+    - `wpa_passphrase 'tempwifi' '9eu8xdexm08rfh0w9erf9ewf09wexr' > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
     - `chmod 640 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
     - `systemctl enable wpa_supplicant@wlan0.service`
     - `systemctl restart wpa_supplicant@wlan0.service`
