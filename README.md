@@ -14,6 +14,7 @@ Main differences between my build and the [official build for Raspberry Pi Zero 
     - My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
     - Didn't utilize ATX power control
     - Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
+    - RTC module
 
 SPI reference: https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html
 Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README
