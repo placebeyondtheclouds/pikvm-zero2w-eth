@@ -1,4 +1,4 @@
-# DIY IP KVM, pikvm on RPI zero 2W with ethernet
+# DIY IP KVM, pikvm on Raspberry Pi Zero 2W with ethernet
 
 ## description
 
