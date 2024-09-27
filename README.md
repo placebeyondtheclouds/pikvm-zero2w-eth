@@ -17,6 +17,7 @@ Main differences between my build and the [official build for Raspberry Pi Zero 
 
 SPI reference: https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html
 Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README
+Systemd units: https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/
 
 ## parts list
 
@@ -55,26 +56,14 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 - DS1307 chip RTC module is connected to I2C bus (default address 0x68). If decide to the module, then the screen wires needs to be soldered to the back of the board.
 
-- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and set the address (the default is 0x3D) with RO. OLED module I2C bus wiring:
+- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and change the address (the default is 0x3D) to 0x3C by shorting the resistor R2. OLED module I2C bus wiring:
 
-| OLED | RPI GPIO     |
-| ---- | ------------ |
-| VCC  | 3.3V (pin 1) |
-| DIN  | SDA (pin 3)  |
-| CLK  | SCL (pin 5)  |
-| GND  | GND (pin 6)  |
-
-- OLED module could also be connected to SPI1 (SPI1 pins are GPIO 16, 17, 18, 19, 20, 21)
-
-| OLED | RPI GPIO                   |
-| ---- | -------------------------- |
-| VCC  | 3.3V (pin 1)               |
-| DIN  | SPI1 MOSI GPIO 20 (pin 38) |
-| CS   | SPI1 CE0 GPIO 18 (pin 12)  |
-| RES  | RES GPIO 27 (pin 13)       |
-| GND  | GND (pin 6)                |
-| CLK  | SPI1 SCLK GPIO 21 (pin 40) |
-| DC   | GPIO 26 (pin 37)           |
+| OLED board | RPI GPIO     |
+| ---------- | ------------ |
+| VCC        | 3.3V (pin 1) |
+| DIN        | SDA (pin 3)  |
+| CLK        | SCL (pin 5)  |
+| GND        | GND (pin 6)  |
 
 ## setting up
 
@@ -103,7 +92,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
   - `rw`
     `pacman -Syy`
-    `pacman -S pikvm-os-updater iperf3 chrony`
+    `pacman -S pikvm-os-updater iperf3 chrony i2c-tools`
     `pikvm-update`
     `ro`
   - on error `failed to synchronize any databases`:
@@ -147,19 +136,6 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `systemctl restart enc28j60-full-duplex.service`
     - `ro`
 
-- (skip) set up the OLED display for use with SPI (I couldn't make it work):
-
-  - `rw`
-  - `nano /boot/config.txt`
-    - ```
-        dtoverlay=spi1-3cs
-      ```
-  - `systemctl enable --now kvmd-oled kvmd-oled-reboot kvmd-oled-shutdown`
-  - `ro`
-  - `sudo /sbin/reboot`
-  - `lsmod`
-  - `dmesg | grep spi`
-
 - set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
 
   - `rw`
@@ -169,7 +145,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
         dtparam=i2c_arm=on
       ```
 
-  - `nano /etc/modules-load.d/kvmd.conf`
+  - `nano /etc/modules-load.d/raspberrypi.conf`
 
     - ```
         i2c-dev
@@ -178,6 +154,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `systemctl enable --now kvmd-oled kvmd-oled-reboot kvmd-oled-shutdown`
   - `ro`
   - `sudo /sbin/reboot`
+  - `i2cdetect -y 1` should display 3c at the address 0x3C
 
 - set up rtc (optional):
 
@@ -186,21 +163,23 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - ```
         dtoverlay=i2c-rtc,ds1307
       ```
+  - `sudo /sbin/reboot`
+  - `i2cdetect -y 1` should display UU at the address 0x68
   - `systemctl restart chronyd`
   - `date`
   - `hwclock --show`
   - `hwclock -w`
-  - add read at boot:
+  - add read from the hardware clock at boot:
 
         - `nano /etc/systemd/system/hwclock-sync.service`
 
         - ```
             [Unit]
             Description=Sync hwclock from system clock
-            After=network.target
+            After=multi-user.target
 
             [Service]
-            Type=oneshot
+            Type=simple
             ExecStart=/usr/bin/hwclock -r
 
             [Install]
@@ -215,7 +194,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 - change ip:
 
   - `rw`
-  - nano /etc/systemd/network/eth0.network
+  - `nano /etc/systemd/network/eth0.network`
 
     - ```
         [Match]
@@ -267,6 +246,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `chmod 640 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
     - `systemctl enable wpa_supplicant@wlan0.service`
     - `systemctl restart wpa_supplicant@wlan0.service`
+    - `systemctl stop wpa_supplicant@wlan0.service`
     - `ro`
 
 - configure the KVM software
