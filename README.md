@@ -4,21 +4,44 @@
 
 Based on https://github.com/pikvm/pikvm
 
-Use case:
+Use cases:
 
 - to control a server with an old BMC firmware that has broken remote control feature
-- Wake-on-LAN other devices
+- a jump device to Wake-on-LAN other devices
+- building with off the shelf components as a safeguard against supply chain attacks
 
-Main differences between my build and the [official build for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
+Main differences between my build and the [official build instructions for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
 
-    - My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
-    - Didn't utilize ATX power control
-    - Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
-    - RTC module
+- My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
+- Didn't utilize ATX power control
+- Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
+- RTC module
 
-SPI reference: https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html
-Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README
-Systemd units: https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/
+## build pictures
+
+| ![untitled-1.jpg](pictures/small/untitled-1.jpg) | ![untitled-2.jpg](pictures/small/untitled-2.jpg) | ![untitled-3.jpg](pictures/small/untitled-3.jpg) |
+| :----------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
+
+| ![untitled-4.jpg](pictures/small/untitled-4.jpg) | ![untitled-5.jpg](pictures/small/untitled-5.jpg) | ![untitled-6.jpg](pictures/small/untitled-6.jpg) |
+| :----------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
+
+| ![untitled-7.jpg](pictures/small/untitled-7.jpg) | ![untitled-8.jpg](pictures/small/untitled-8.jpg) | ![untitled-9.jpg](pictures/small/untitled-9.jpg) |
+| :----------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
+
+| ![untitled-10.jpg](pictures/small/untitled-10.jpg) | ![untitled-11.jpg](pictures/small/untitled-11.jpg) | ![untitled-12.jpg](pictures/small/untitled-12.jpg) |
+| :------------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
+
+| ![untitled-13.jpg](pictures/small/untitled-13.jpg) | ![untitled-14.jpg](pictures/small/untitled-14.jpg) | ![untitled-15.jpg](pictures/small/untitled-15.jpg) |
+| :------------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
+
+| ![untitled-16.jpg](pictures/small/untitled-16.jpg) | ![untitled-17.jpg](pictures/small/untitled-17.jpg) | ![untitled-18.jpg](pictures/small/untitled-18.jpg) |
+| :------------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
+
+| ![untitled-19.jpg](pictures/small/untitled-19.jpg) | ![untitled-20.jpg](pictures/small/untitled-20.jpg) | ![untitled-21.jpg](pictures/small/untitled-21.jpg) |
+| :------------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
+
+| ![Screenshot from 2024-09-27 22-17-45.png](pictures/Screenshot.png) |     |     |
+| :-----------------------------------------------------------------: | :-: | :-: |
 
 ## parts list
 
@@ -103,7 +126,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `nano /boot/config.txt`
     - ```
         dtparam=spi=on
-        dtoverlay=enc28j60,int_pin=25,speed=25000000
+        dtoverlay=enc28j60,int_pin=25,speed=20000000
       ```
   - `ro`
   - `sudo /sbin/reboot`
@@ -132,7 +155,6 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `systemctl daemon-reload`
     - `systemctl enable enc28j60-full-duplex.service`
     - `systemctl start enc28j60-full-duplex.service`
-    - `systemctl restart enc28j60-full-duplex.service`
     - `ro`
 
 - set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
@@ -167,24 +189,27 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `systemctl restart chronyd`
   - `date`
   - `hwclock --show`
-  - `hwclock -w`
+  - `hwclock --systohc`, do it once to write the current time to the RTC
   - add read from the hardware clock at boot:
 
         - `nano /etc/systemd/system/hwclock-sync.service`
 
         - ```
-            [Unit]
-            Description=Sync hwclock from system clock
-            After=multi-user.target
+          [Unit]
+          Description=Sync hwclock from system clock
+          After=systemd-modules-load.service
+          Before=systemd-timesyncd.service
 
-            [Service]
-            Type=simple
-            ExecStart=/usr/bin/hwclock -r
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/bin/hwclock --hctosys
+          RemainAfterExit=yes
 
-            [Install]
-            WantedBy=multi-user.target
-            ```
-
+          [Install]
+          WantedBy=multi-user.target
+          ```
+        - `chmod 644 /etc/systemd/system/hwclock-sync.service`
+        - `systemctl daemon-reload`
         - `systemctl enable hwclock-sync.service`
 
   - `timedatectl set-timezone Asia/Shanghai`
@@ -300,3 +325,25 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
                       - ["#server1", "wol_server2 | WoL"]
                       - ["#PiKVM", "pikvm_led|green", "restart_service_button|confirm|Service", "reboot_button|confirm|Reboot"]
       ```
+
+## results
+
+- it's working as it should
+- power consumption 2.5W when streaming and half of that when idle
+
+## references
+
+- https://github.com/pikvm/pikvm
+- SPI reference: https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html
+- Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README
+- Systemd units: https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/
+- ENC28J60 datasheet: https://ww1.microchip.com/downloads/en/DeviceDoc/39662c.pdf
+- https://www.instructables.com/Super-Cheap-Ethernet-for-the-Raspberry-Pi/
+- https://raspi.tv/2015/ethernet-on-pi-zero-how-to-put-an-ethernet-port-on-your-pi
+- https://windix.medium.com/pikvm-with-raspberry-pi-zero-2-w-b5f9d4a6ff32
+- https://docs.pikvm.org/v2/
+- https://technotim.live/posts/pikvm-at-scale/
+- https://technotim.live/posts/wake-on-lan/
+- https://www.makeuseof.com/how-to-build-raspberry-pi-kvm/
+- https://pimylifeup.com/raspberry-pi-rtc/
+- https://maker.pro/raspberry-pi/tutorial/how-to-add-an-rtc-module-to-raspberry-pi
