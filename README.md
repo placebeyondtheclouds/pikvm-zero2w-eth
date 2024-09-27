@@ -56,6 +56,8 @@ Main differences between my build and the [official build instructions for Raspb
 - Raspberry Pi zero 2 W - https://www.waveshare.com/wiki/Raspberry_Pi_Zero_2_W 165 元
 - DS1307 RTC board 20 元 (optional, do not recommend, better use DS3231 chip based board)
 - terminated colored wires 2 元
+- zip ties
+- HDMI cable
 
 ## software
 
@@ -63,7 +65,6 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 ## wiring
 
-- RPI GPIO pinout: https://pinout.xyz/pinout/spi
 - ENC28J60 board is connected to SPI0 bus (SPI0 pins are GPIO 7, 8, 9, 10, 11)
 
 | ENC28J60 | RPI GPIO             |
@@ -334,6 +335,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 ## references
 
 - https://github.com/pikvm/pikvm
+- RPI GPIO pinout: https://pinout.xyz/pinout/spi
 - SPI reference: https://www.analog.com/en/resources/analog-dialogue/articles/introduction-to-spi-interface.html
 - Overlays reference: https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README
 - Systemd units: https://www.thedigitalpictureframe.com/ultimate-guide-systemd-autostart-scripts-raspberry-pi/
