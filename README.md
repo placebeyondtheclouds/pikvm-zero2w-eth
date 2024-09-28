@@ -1,6 +1,6 @@
 # DIY IP KVM, pikvm on Raspberry Pi Zero 2W with ethernet
 
-## description
+## Description
 
 Based on https://github.com/pikvm/pikvm
 
@@ -17,7 +17,7 @@ Main differences between my build and the [official build instructions for Raspb
 - Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
 - RTC module
 
-## build pictures
+## Build pictures
 
 | ![untitled-1.jpg](pictures/small/untitled-1.jpg) | ![untitled-2.jpg](pictures/small/untitled-2.jpg) | ![untitled-3.jpg](pictures/small/untitled-3.jpg) |
 | :----------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: |
@@ -43,7 +43,7 @@ Main differences between my build and the [official build instructions for Raspb
 | ![Screenshot from 2024-09-27 22-17-45.png](pictures/Screenshot.png) |     |     |
 | :-----------------------------------------------------------------: | :-: | :-: |
 
-## parts list
+## Parts list
 
 - a generic plastic case for PLC, 145x90x40 2 元
 - HDMI to CSI2 adapter, TC35874XBG chip https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter 129 元
@@ -59,11 +59,11 @@ Main differences between my build and the [official build instructions for Raspb
 - zip ties
 - HDMI cable
 
-## software
+## Software
 
 https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
-## wiring
+## Wiring
 
 - ENC28J60 board is connected to SPI0 bus (SPI0 pins are GPIO 7, 8, 9, 10, 11)
 
@@ -88,7 +88,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 | CLK        | SCL (pin 5)  |
 | GND        | GND (pin 6)  |
 
-## setting up
+## Setting up
 
 - flash the image, then remount and edit the file `pikvm.txt` on the boot partition
 - nano pikvm.txt
@@ -112,6 +112,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     `kvmd-htpasswd set admin`  
     `ro`
 - update:
+  Make sure there is Internet connectivity
 
   - `rw`
     `pacman -Syy`
@@ -158,6 +159,15 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `systemctl start enc28j60-full-duplex.service`
     - `ro`
 
+- test the stability of the ethernet connection:
+
+  - on the pikvm:
+
+    - `iperf3 -s 192.168.1.150`
+
+  - on the host machine:
+    - `iperf3 -c  192.168.1.150 -P 2 -t 30`
+
 - set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
 
   - `rw`
@@ -187,7 +197,8 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
       ```
   - `sudo /sbin/reboot`
   - `i2cdetect -y 1` should display UU at the address 0x68
-  - `systemctl restart chronyd`
+  - `systemctl enable chronyd`
+  - `systemctl start chronyd`
   - `date`
   - `hwclock --show`
   - `hwclock --systohc`, do it once to write the current time to the RTC
@@ -227,9 +238,9 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 
         [Network]
-        Address=192.168.19.150/24
-        Gateway=192.168.19.1
-        DNS=192.168.19.1
+        Address=192.168.1.150/24
+        Gateway=192.168.1.1
+        DNS=192.168.1.1
 
       ```
 
@@ -240,10 +251,10 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - or temporarily:
     - ip a show
     - ip link set eth0 up
-    - ip a add 192.168.19.150/24 broadcast + dev eth0
-      - ip a del 192.168.19.150/24 dev eth0
+    - ip a add 192.168.1.150/24 broadcast + dev eth0
+      - ip a del 192.168.1.150/24 dev eth0
     - ip r show
-    - ip r add 0.0.0.0/0 via 192.168.19.1 dev eth0
+    - ip r add 0.0.0.0/0 via 192.168.1.1 dev eth0
   - `ro`
   - `ethtool eth0`
 
@@ -327,12 +338,22 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
                       - ["#PiKVM", "pikvm_led|green", "restart_service_button|confirm|Service", "reboot_button|confirm|Reboot"]
       ```
 
-## results
+## Results
 
-- it's working as it should
+- it's working as it supposed to
 - power consumption 2.5W when streaming and half of that when idle
+- ethernet stability:
+  - ```
+    [ ID] Interval           Transfer     Bitrate         Retr
+    [  5]   0.00-30.00  sec  20.5 MBytes  5.73 Mbits/sec    2             sender
+    [  5]   0.00-30.01  sec  18.9 MBytes  5.28 Mbits/sec                  receiver
+    [  7]   0.00-30.00  sec  14.0 MBytes  3.91 Mbits/sec    2             sender
+    [  7]   0.00-30.01  sec  11.9 MBytes  3.32 Mbits/sec                  receiver
+    [SUM]   0.00-30.00  sec  34.5 MBytes  9.65 Mbits/sec    4             sender
+    [SUM]   0.00-30.01  sec  30.8 MBytes  8.60 Mbits/sec                  receiver
+    ```
 
-## references
+## References
 
 - https://github.com/pikvm/pikvm
 - RPI GPIO pinout: https://pinout.xyz/pinout/spi
