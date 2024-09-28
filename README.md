@@ -79,7 +79,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 | SO       | GPIO9 MISO (Pin 21)  |
 | INT      | GPIO 25 (Pin 22)     |
 
-- DS1307 chip RTC module is connected to I2C bus (default address 0x68). If decide to the module, then the screen wires needs to be soldered to the back of the board.
+- DS1307 chip RTC module is connected to I2C bus (default address 0x68). If decide to use the module, then the screen wires need to be soldered to the back of the board.
 
 - connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and change the address (the default is 0x3D) to 0x3C by shorting the resistor R2. OLED module I2C bus wiring:
 
