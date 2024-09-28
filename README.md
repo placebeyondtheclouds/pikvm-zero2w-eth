@@ -13,6 +13,7 @@ Use cases:
 Main differences between my build and the [official build instructions for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
 
 - My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
+- Full duplex mode for the ethernet adapter.
 - Didn't utilize ATX power control
 - Powered by the keyboard/mouse interface cable plugged into the USB socket of the rpi (can be changed to external power by cutting +5V wire in this cable and adding another cable plugged into PWR socket of the rpi)
 - RTC module
@@ -351,6 +352,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 - it's working as it supposed to
 - power consumption 2.5W when streaming and half of that when idle
+- The adapter doesn't support auto-negotiation, so full duplex should not work with auto-negotiation on the other end (requres setting full duplex mode manually on both ends), **but it is working** with every adapter I tested. Default half-duplex mode connection is unstable and hangs on traffic.
 - ethernet stability:
   - ```
     [ ID] Interval           Transfer     Bitrate         Retr
