@@ -92,8 +92,8 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 ## Setting up
 
-- flash the image, then remount and edit the file `pikvm.txt` on the boot partition
-- nano pikvm.txt
+- Flash the image, then remount and edit the file `pikvm.txt` on the boot partition
+- `nano pikvm.txt`
   - ```
       ETH_ADDR=192.168.1.150/24
       ETH_DNS=192.168.1.1
@@ -105,15 +105,15 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
       WIFI_DNS=192.168.18.1
       WIFI_GW=192.168.18.1
     ```
-- boot
+- Boot
 - http://192.168.18.150 user `admin`, password `admin`
 - `ssh root@192.168.18.150` user `root`, password `root`
-- change passwords:
+- Change the passwords:
   - `rw`
     `passwd root`  
     `kvmd-htpasswd set admin`  
     `ro`
-- update:
+- Update:
 
   Make sure there is Internet connectivity
 
@@ -125,7 +125,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - on error `failed to synchronize any databases`:
     - `rm -f /var/lib/pacman/db.lck`
 
-- set up the ethernet module:
+- Set up the ethernet module:
 
   - `rw`
   - `nano /boot/config.txt`
@@ -162,7 +162,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `systemctl start enc28j60-full-duplex.service`
     - `ro`
 
-- test the stability of the ethernet connection:
+- Test the stability of the ethernet connection:
 
   - on the pikvm:
 
@@ -171,7 +171,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - on the host machine:
     - `iperf3 -c  192.168.1.150 -P 2 -t 30`
 
-- set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
+- Set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
 
   - `rw`
   - `nano /boot/config.txt`
@@ -191,7 +191,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `sudo /sbin/reboot`
   - `i2cdetect -y 1` should display 3c at the address 0x3C
 
-- (optional) set up rtc:
+- (optional) Set up rtc:
 
   - `rw`
   - `nano /boot/config.txt`
@@ -231,7 +231,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
   - `ro`
 
-- (optional) change ethernet ip:
+- (optional) Change ethernet ip:
 
   - `rw`
   - `nano /etc/systemd/network/eth0.network`
@@ -262,7 +262,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `ro`
   - `ethtool eth0`
 
-- (optional) change wifi ip and parameters (https://docs.pikvm.org/wifi/#setting-up-wi-fi-manually):
+- (optional) Change wifi ip and parameters (https://docs.pikvm.org/wifi/#setting-up-wi-fi-manually):
 
   - `rw`
   - `nano /etc/systemd/network/wlan0.network`
@@ -288,14 +288,14 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `systemctl start wpa_supplicant@wlan0.service`
     - `ro`
 
-- disable wifi:
+- Disable wifi:
 
   - `rw`
   - `echo > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
   - `systemctl disable wpa_supplicant@wlan0.service`
   - `systemctl stop wpa_supplicant@wlan0.service`
 
-- configure the KVM software
+- Configure the KVM software
 
   - `rw`
   - `nano /etc/kvmd/override.yaml`
