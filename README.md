@@ -197,6 +197,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
       ```
   - `sudo /sbin/reboot`
   - `i2cdetect -y 1` should display UU at the address 0x68
+  - `timedatectl set-timezone Asia/Shanghai`
   - `systemctl enable chronyd`
   - `systemctl start chronyd`
   - `date`
@@ -224,7 +225,6 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
         - `systemctl daemon-reload`
         - `systemctl enable hwclock-sync.service`
 
-  - `timedatectl set-timezone Asia/Shanghai`
   - `ro`
 
 - change ip:
