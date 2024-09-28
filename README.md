@@ -112,6 +112,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     `kvmd-htpasswd set admin`  
     `ro`
 - update:
+
   Make sure there is Internet connectivity
 
   - `rw`
@@ -188,7 +189,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `sudo /sbin/reboot`
   - `i2cdetect -y 1` should display 3c at the address 0x3C
 
-- set up rtc (optional):
+- (optional) set up rtc:
 
   - `rw`
   - `nano /boot/config.txt`
@@ -205,29 +206,30 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `hwclock --systohc`, do it once to write the current time to the RTC
   - add read from the hardware clock at boot:
 
-        - `nano /etc/systemd/system/hwclock-sync.service`
+    - `nano /etc/systemd/system/hwclock-sync.service`
 
-        - ```
-          [Unit]
-          Description=Sync hwclock from system clock
-          After=systemd-modules-load.service
-          Before=systemd-timesyncd.service
+      - ```
+        [Unit]
+        Description=Sync hwclock from system clock
+        After=systemd-modules-load.service
+        Before=systemd-timesyncd.service
 
-          [Service]
-          Type=oneshot
-          ExecStart=/usr/bin/hwclock --hctosys
-          RemainAfterExit=yes
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/hwclock --hctosys
+        RemainAfterExit=yes
 
-          [Install]
-          WantedBy=multi-user.target
-          ```
-        - `chmod 644 /etc/systemd/system/hwclock-sync.service`
-        - `systemctl daemon-reload`
-        - `systemctl enable hwclock-sync.service`
+        [Install]
+        WantedBy=multi-user.target
+        ```
+
+    - `chmod 644 /etc/systemd/system/hwclock-sync.service`
+    - `systemctl daemon-reload`
+    - `systemctl enable hwclock-sync.service`
 
   - `ro`
 
-- change ip:
+- (optional) change ethernet ip:
 
   - `rw`
   - `nano /etc/systemd/network/eth0.network`
@@ -258,7 +260,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `ro`
   - `ethtool eth0`
 
-- change wifi parameters (https://docs.pikvm.org/wifi/#setting-up-wi-fi-manually):
+- (optional) change wifi ip and parameters (https://docs.pikvm.org/wifi/#setting-up-wi-fi-manually):
 
   - `rw`
   - `nano /etc/systemd/network/wlan0.network`
@@ -281,9 +283,15 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
     - `wpa_passphrase 'tempwifi' '9eu8xdexm08rfh0w9erf9ewf09wexr' > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
     - `chmod 640 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
     - `systemctl enable wpa_supplicant@wlan0.service`
-    - `systemctl restart wpa_supplicant@wlan0.service`
-    - `systemctl stop wpa_supplicant@wlan0.service`
+    - `systemctl start wpa_supplicant@wlan0.service`
     - `ro`
+
+- disable wifi:
+
+  - `rw`
+  - `echo > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
+  - `systemctl disable wpa_supplicant@wlan0.service`
+  - `systemctl stop wpa_supplicant@wlan0.service`
 
 - configure the KVM software
 
@@ -337,6 +345,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
                       - ["#server1", "wol_server2 | WoL"]
                       - ["#PiKVM", "pikvm_led|green", "restart_service_button|confirm|Service", "reboot_button|confirm|Reboot"]
       ```
+  - `ro`
 
 ## Results
 
