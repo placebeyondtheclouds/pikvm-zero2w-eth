@@ -6,9 +6,9 @@ Based on https://github.com/pikvm/pikvm
 
 Use cases:
 
-- to control a server with an old BMC firmware that has broken remote control feature
-- a jump device to Wake-on-LAN other devices
-- building with off the shelf components as a safeguard against supply chain attacks
+- To control a server with an old BMC firmware that has broken remote control feature
+- A jump device to Wake-on-LAN other devices
+- Building with off the shelf components as a safeguard against supply chain attacks
 
 Main differences between my build and the [official build instructions for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
 
