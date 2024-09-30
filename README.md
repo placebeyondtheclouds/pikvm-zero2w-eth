@@ -6,7 +6,7 @@ Based on https://github.com/pikvm/pikvm
 
 Use cases:
 
-- To control a server with an old BMC firmware that has broken remote control feature
+- To control a server with an old BMC firmware that has broken remote screen feature
 - A jump device to Wake-on-LAN other devices
 - Building with off the shelf components as a safeguard against supply chain attacks
 
@@ -81,7 +81,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 - DS1307 chip RTC module is connected to I2C bus (default address 0x68). If decide to use the module, then the screen wires need to be soldered to the back of the board.
 
-- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove resistor R1 and change the address (the default is 0x3D) to 0x3C by shorting the resistor R2. OLED module I2C bus wiring:
+- connect OLED module to I2C. By default the display is set to SPI mode. To set the display to I2C mode, remove the resistor R1 and change the address (the default is 0x3D) to 0x3C by shorting the resistor R2. OLED module I2C bus wiring:
 
 | OLED board | RPI GPIO     |
 | ---------- | ------------ |
@@ -110,18 +110,18 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 - `ssh root@192.168.18.150` user `root`, password `root`
 - Change the passwords:
   - `rw`
-    `passwd root`  
-    `kvmd-htpasswd set admin`  
-    `ro`
+  - `passwd root`
+  - `kvmd-htpasswd set admin`
+  - `ro`
 - Update:
 
   Make sure there is Internet connectivity
 
   - `rw`
-    `pacman -Syy`
-    `pacman -S pikvm-os-updater iperf3 chrony i2c-tools`
-    `pikvm-update`
-    `ro`
+  - `pacman -Syy`
+  - `pacman -S pikvm-os-updater iperf3 chrony i2c-tools`
+  - `pikvm-update`
+  - `ro`
   - on error `failed to synchronize any databases`:
     - `rm -f /var/lib/pacman/db.lck`
 
@@ -171,7 +171,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - on the host machine:
     - `iperf3 -c  192.168.1.150 -P 2 -t 30`
 
-- Set up the OLED display for use with I2C (desolder R1 and connect to I2C bus):
+- Set up the OLED display for use with I2C:
 
   - `rw`
   - `nano /boot/config.txt`
@@ -353,7 +353,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 - It's working as it supposed to
 - Power consumption 2.5W when streaming and half of that when idle
-- The adapter doesn't support auto-negotiation, so full duplex should not work with auto-negotiation on the other end (requres setting full duplex mode manually on both ends), **but it is working** with every adapter I tested. Default half-duplex mode connection is unstable and hangs on traffic.
+- The adapter doesn't support auto-negotiation, so full duplex is not supposed to work with auto-negotiation on the other end (requres setting full duplex mode manually on both ends), **but it is working** with every usb-eth adapter I tested. Default half-duplex mode connection is unstable and hangs on traffic.
 - Ethernet stability:
   - ```
     [ ID] Interval           Transfer     Bitrate         Retr
