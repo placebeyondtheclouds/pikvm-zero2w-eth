@@ -125,6 +125,12 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - on error `failed to synchronize any databases`:
     - `rm -f /var/lib/pacman/db.lck`
 
+- Disable IPv6:
+
+  - `rw`
+  - `echo ipv6.disable_ipv6=1 >> /boot/cmdline.txt`
+  - `ro`
+
 - Set up the ethernet module:
 
   - `rw`
