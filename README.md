@@ -294,6 +294,14 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
   - `echo > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
   - `systemctl disable wpa_supplicant@wlan0.service`
   - `systemctl stop wpa_supplicant@wlan0.service`
+  - `ro`
+
+- Disable talking to the outside STUN servers:
+
+  - `rw`
+  - `systemctl disable --now kvmd-janus`
+  - `systemctl enable --now kvmd-janus-static`
+  - `ro`
 
 - Configure the KVM software
 
