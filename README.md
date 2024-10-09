@@ -367,7 +367,7 @@ https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
 
 - It's working as it supposed to
 - Power consumption 2.5W when streaming and half of that when idle
-- The adapter doesn't support auto-negotiation, so full duplex is not supposed to work with auto-negotiation on the other end (requres setting full duplex mode manually on both ends), **but it is working** with every usb-eth adapter I tested. Default half-duplex mode connection is unstable and hangs on traffic.
+- The adapter doesn't support auto-negotiation, so full duplex is not supposed to work with auto-negotiation on the other end (requres setting full duplex mode manually on both ends), **but it is working** with every usb-ethernet adapter I tested as well as with tl-sf1008m 100M switch. Default half-duplex mode connection is unstable and hangs on traffic.
 - Ethernet stability:
   - ```
     [ ID] Interval           Transfer     Bitrate         Retr
