@@ -6,7 +6,7 @@ Based on https://github.com/pikvm/pikvm
 
 ## Use cases:
 
-- When a secure solution, unlike [some closed-source KVM products are](https://github.com/sipeed/NanoKVM/issues/270), is needed
+- When a secure open-source solution, unlike [some closed-source KVM products](https://github.com/sipeed/NanoKVM/issues?q=is%3Aissue%20state%3Aopen%20%20security) [are](https://www.youtube.com/watch?v=plJGZQ35Q6I), is needed
 - A jump device to Wake-on-LAN other devices
 - Building with off-the-shelf components as a safeguard against supply chain attacks
 
@@ -62,7 +62,9 @@ between my build and the [official DIY V2 build instructions for Raspberry Pi Ze
 
 ## Software
 
-https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
+download https://files.pikvm.org/images/v2-hdmi-zero2w-latest.img.xz
+
+or [compile from source](https://docs.pikvm.org/building_os/)
 
 ## Wiring
 
