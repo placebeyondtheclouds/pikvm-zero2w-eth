@@ -4,12 +4,11 @@
 
 Based on https://github.com/pikvm/pikvm
 
-Use cases:
+## Use cases:
 
-- When better security than [some commercial KVM products have](https://github.com/sipeed/NanoKVM/issues/270) is needed
-- To control a server with an old BMC firmware that has broken remote screen feature
+- When a secure solution, unlike [some closed-source KVM products are](https://github.com/sipeed/NanoKVM/issues/270), is needed
 - A jump device to Wake-on-LAN other devices
-- Building with off the shelf components as a safeguard against supply chain attacks
+- Building with off-the-shelf components as a safeguard against supply chain attacks
 
 ## Main differences
 
