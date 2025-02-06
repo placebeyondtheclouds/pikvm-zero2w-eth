@@ -6,11 +6,14 @@ Based on https://github.com/pikvm/pikvm
 
 Use cases:
 
+- When better security than [some commercial KVMs](https://github.com/sipeed/NanoKVM/issues/270) is needed
 - To control a server with an old BMC firmware that has broken remote screen feature
 - A jump device to Wake-on-LAN other devices
 - Building with off the shelf components as a safeguard against supply chain attacks
 
-Main differences between my build and the [official DIY V2 build instructions for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
+## Main differences
+
+between my build and the [official DIY V2 build instructions for Raspberry Pi Zero 2 W](https://docs.pikvm.org/v2/#required-parts):
 
 - My hardware setup has ENC28J60 chip based ethernet adapter, connected to GPIO through SPI protocol (four-wire serial bus)
 - Full duplex mode for the ethernet adapter.
