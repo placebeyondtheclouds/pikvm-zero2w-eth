@@ -6,7 +6,7 @@ Based on https://github.com/pikvm/pikvm
 
 ## Use cases:
 
-- When a secure open-source solution, unlike [some closed-source KVM products](https://github.com/sipeed/NanoKVM/issues?q=is%3Aissue%20state%3Aopen%20%20security) [are](https://www.youtube.com/watch?v=plJGZQ35Q6I), is needed
+- When a secure, truly open-source solution (unlike [some closed-source KVM products](https://github.com/sipeed/NanoKVM/issues?q=is%3Aissue%20state%3Aopen%20%20security) [are](https://www.youtube.com/watch?v=plJGZQ35Q6I)) is needed
 - A jump device to Wake-on-LAN other devices
 - Building with off-the-shelf components as a safeguard against supply chain attacks
 
